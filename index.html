@@ -26,16 +26,16 @@
       list-style-type: none;
       padding: 0;
       margin: 0;
+      display: flex;
     }
 
     header nav ul li {
-      display: inline-block;
+      padding: 10px 20px;
     }
 
     header nav ul li a {
       color: white;
       text-decoration: none;
-      padding: 10px 20px;
     }
 
     main {
@@ -46,6 +46,7 @@
       background-color: white;
       padding: 20px;
       margin-bottom: 20px;
+      transition: transform 0.3s ease, background-color 0.2s ease;
       box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
     }
 
@@ -62,6 +63,33 @@
       background-color: #333;
       color: white;
     }
+
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      header img {
+        margin-bottom: 10px;
+      }
+
+      header nav ul {
+        flex-direction: column;
+      }
+
+      header nav ul li {
+        padding: 10px 0;
+      }
+
+      main {
+        padding: 10px;
+      }
+
+      article {
+        padding: 15px;
+      }
+    }
   </style>
   
 </head>
@@ -72,24 +100,38 @@
     <nav>
       <ul>
         <li><a href="#">首页</a></li>
-        <li><a href="#">文章</a></li>
+        <li><a href="https://voia.github.io/0">文章</a></li>
       </ul>
     </nav>
   </header>
   <main>
-    <article>
+    <article onclick="this.style.transform='translate(5px,5px)'; this.style.backgroundColor='#f0f0f0'; setTimeout(() => { this.style.transform=''; this.style.backgroundColor='white'; }, 300);">
       <h2>ttwa.cloud</h2>
       <p>跳跳蛙，励志做一只有梦想的青蛙</p>
     </article>
-    <article>
+    <article onclick="this.style.transform='translate(5px,5px)'; this.style.backgroundColor='#f0f0f0'; setTimeout(() => { this.style.transform=''; this.style.backgroundColor='white'; }, 300);">
       <h2>Believe Yourself</h2>
       <p>愿世间有课无忧树,我爱的人在树荫下</p>
       
     </article>
+    <article onclick="this.style.transform='translate(5px,5px)'; this.style.backgroundColor='#f0f0f0'; setTimeout(() => { this.style.transform=''; this.style.backgroundColor='white'; }, 300);">
+        <h2>Sharing Of Experience</h2>
+        <p>如果你解决一些关于bot相关的问题，可以找到风铃。</p>
+        联系风铃：<a href="https://qm.qq.com/q/12DKAZDYZk" >5408547@qq.com</a>
+      </article>
+
   </main>
   <footer>
     风铃·版权所有
   </footer>
+  <audio id="myAudio" src="http://music.163.com/song/media/outer/url?id=67467.mp3"></audio>
+
+  <script>
+    window.onload = function () {
+      var audio = document.getElementById('myAudio');
+      audio.play();
+    };
+  </script>
 </body>
 
 </html>

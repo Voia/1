@@ -2,135 +2,80 @@
 <html>
 
 <head>
+  <title>我的个人主页</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #f8f9fa;
+      background-color: #f5f5f5;
     }
 
-    header {
+ .container {
+      width: 80%;
+      margin: 0 auto;
+      padding: 50px 0;
+    }
+
+ .profile {
+      background-color: #fff;
+      padding: 30px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 20px;
-      background-color: #4CAF50;
-      color: white;
     }
 
-    header img {
-      width: 50px;
-      height: 50px;
+ .avatar {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background-image: url('http://q.qlogo.cn/headimg_dl?dst_uin=5408547&spec=640&img_type=jpg');
+      background-size: cover;
+      background-repeat: no-repeat;
+      margin-right: 30px;
     }
 
-    header nav ul {
-      list-style-type: none;
-      padding: 0;
+ .profile-info {
+      flex: 1;
+    }
+
+ .profile-info h1 {
       margin: 0;
-      display: flex;
+      font-size: 28px;
+      color: #333;
     }
 
-    header nav ul li {
-      padding: 10px 20px;
-    }
-
-    header nav ul li a {
-      color: white;
-      text-decoration: none;
-    }
-
-    main {
-      padding: 20px;
-    }
-
-    article {
-      background-color: white;
-      padding: 20px;
-      margin-bottom: 20px;
-      transition: transform 0.3s ease, background-color 0.2s ease;
-      box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-    }
-
-    article h2 {
-      margin-top: 0;
-    }
-
-    article p {
-      margin-bottom: 10px;
-    }
-
-    footer {
-      padding: 20px;
-      background-color: #333;
-      color: white;
-    }
-
-    @media (max-width: 768px) {
-      header {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      header img {
-        margin-bottom: 10px;
-      }
-
-      header nav ul {
-        flex-direction: column;
-      }
-
-      header nav ul li {
-        padding: 10px 0;
-      }
-
-      main {
-        padding: 10px;
-      }
-
-      article {
-        padding: 15px;
-      }
+ .profile-info p {
+      opacity: 0;
+      transition: opacity 2s ease-in;
+      margin: 10px 0;
+      color: #666;
     }
   </style>
-  
 </head>
 
 <body>
-  <header>
-    <img src="https://s2.loli.net/2024/05/27/RIMqsGCLzekSjnH.png" alt="博客图标">
-    <nav>
-      <ul>
-        <li><a href="#">首页</a></li>
-        <li><a href="https://voia.github.io/0">文章</a></li>
-      </ul>
-    </nav>
-  </header>
-  <main>
-    <article onclick="this.style.transform='translate(5px,5px)'; this.style.backgroundColor='#f0f0f0'; setTimeout(() => { this.style.transform=''; this.style.backgroundColor='white'; }, 300);">
-      <h2>ttwa.cloud</h2>
-      <p>跳跳蛙，励志做一只有梦想的青蛙</p>
-    </article>
-    <article onclick="this.style.transform='translate(5px,5px)'; this.style.backgroundColor='#f0f0f0'; setTimeout(() => { this.style.transform=''; this.style.backgroundColor='white'; }, 300);">
-      <h2>Believe Yourself</h2>
-      <p>愿世间有课无忧树,我爱的人在树荫下</p>
-      
-    </article>
-    <article onclick="this.style.transform='translate(5px,5px)'; this.style.backgroundColor='#f0f0f0'; setTimeout(() => { this.style.transform=''; this.style.backgroundColor='white'; }, 300);">
-        <h2>Sharing Of Experience</h2>
-        <p>如果你解决一些关于bot相关的问题，可以找到风铃。</p>
-        联系风铃：<a href="https://qm.qq.com/q/12DKAZDYZk" >5408547@qq.com</a>
-      </article>
-
-  </main>
-  <footer>
-    风铃·版权所有
-  </footer>
-  <audio id="myAudio" src="http://music.163.com/song/media/outer/url?id=67467.mp3"></audio>
+  <div id="timeDisplay" style="position: absolute; top: 20px; left: 20px;">
+  </div>
+  <div class="container">
+    <div class="profile">
+      <div class="avatar"></div>
+      <div class="profile-info">
+        <h1>ttwa.cloud</h1>
+        <p>我是风铃宝宝，想看风铃宝宝骂人的扣1</p>
+      </div>
+    </div>
+  </div>
 
   <script>
-    window.onload = function () {
-      var audio = document.getElementById('myAudio');
-      audio.play();
-    };
+    function updateTime() {
+      var now = new Date();
+      var timeString = now.toLocaleTimeString();
+      document.getElementById("timeDisplay").innerHTML = timeString;
+    }
+
+    setInterval(updateTime, 1000);
+
+    window.addEventListener('load', function () {
+      document.querySelector('.profile-info p').style.opacity = 1;
+    });
   </script>
 </body>
 

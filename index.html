@@ -1,11 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>风铃</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人博客</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+       .blog-container {
+            max-width: 600px;
+            width: 90%;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        details {
+            background-color: #e0e0e0;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        details summary {
+            font-weight: bold;
+            color: #333;
+        }
+
+        details[open] summary {
+            margin-bottom: 10px;
+        }
+
+        details p {
+            color: #666;
+            font-size: 18px;
+            line-height: 1.5;
+        }
+
+        /* 媒体查询：当屏幕宽度小于等于 768px（通常是手机屏幕大小）时 */
+        @media (max-width: 768px) {
+           .blog-container {
+                width: 100%;
+            }
+        }
+
+        /* 样式化 logo */
+       .logo {
+            width: 50px;
+            height: 50px;
+            background-image: url(https://s2.loli.net/2024/08/04/4qWCcUbyP876fDn.jpg);
+            background-size: cover;
+            margin-bottom: 15px;
+        }
+
+        /* 导航栏样式 */
+       .nav {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+       .nav a {
+            text-decoration: none;
+            color: #333;
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        /* 页脚样式 */
+       .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #999;
+        }
+    </style>
 </head>
+
 <body>
-  hello World！
+    <div class="blog-container">
+        <div class="logo"></div>
+        <div class="nav">
+        </div>
+        <details>
+            <summary>风铃的垃圾桶</summary>
+            <p>这里是风铃的垃圾桶。</p>
+        </details>
+        <details>
+            <summary>风铃的宝藏屋</summary>
+            <p>这里是风铃的小小宝藏屋，里面可能会藏有一些有趣的东西。~</p>
+        </details>
+        <div class="footer">
+            © 2024 风铃
+        </div>
+    </div>
 </body>
+
 </html>

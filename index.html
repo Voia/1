@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>个人博客</title>
+    <title>ttwa.cloud</title>
     <style>
         body {
             display: flex;
@@ -15,7 +15,7 @@
             background-color: #f0f0f0;
         }
 
-       .blog-container {
+      .blog-container {
             max-width: 600px;
             width: 90%;
             background-color: white;
@@ -49,13 +49,13 @@
 
         /* 媒体查询：当屏幕宽度小于等于 768px（通常是手机屏幕大小）时 */
         @media (max-width: 768px) {
-           .blog-container {
+          .blog-container {
                 width: 100%;
             }
         }
 
         /* 样式化 logo */
-       .logo {
+      .logo {
             width: 50px;
             height: 50px;
             background-image: url(https://s2.loli.net/2024/08/04/4qWCcUbyP876fDn.jpg);
@@ -64,13 +64,13 @@
         }
 
         /* 导航栏样式 */
-       .nav {
+      .nav {
             display: flex;
             justify-content: space-between;
             margin-bottom: 20px;
         }
 
-       .nav a {
+      .nav a {
             text-decoration: none;
             color: #333;
             padding: 5px 10px;
@@ -79,10 +79,24 @@
         }
 
         /* 页脚样式 */
-       .footer {
+      .footer {
             text-align: center;
             margin-top: 20px;
             color: #999;
+        }
+
+        details p a {
+            text-decoration: none;
+            color: #007bff;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+        }
+
+        details p a::before {
+            content: "•";
+            margin-right: 8px;
+            color: #ff6347;
         }
     </style>
 </head>
@@ -90,18 +104,17 @@
 <body>
     <div class="blog-container">
         <div class="logo"></div>
-        <div class="nav">
-        </div>
+        <div class="nav"></div>
         <details>
-            <summary>风铃的垃圾桶</summary>
-            <p>这里是风铃的垃圾桶。</p>
+            <summary>程序守护</summary>
+            <p>程序守护：直接将要守护的软件拖入表内，右键执行功能。<a href="https://i0i.lanzout.com/b004hx0b3a">下载地址</a></p>
         </details>
         <details>
-            <summary>风铃的宝藏屋</summary>
-            <p>这里是风铃的小小宝藏屋，里面可能会藏有一些有趣的东西。~</p>
+            <summary>开源小屋</summary>
+            <p>内涵各种开源项目。<a href="https://m.youlai.cn/hospitalrank/pro_0_14.html">下载地址</a></p>
         </details>
         <div class="footer">
-            © 2024 风铃
+            密码啥的都是6666
         </div>
     </div>
 </body>

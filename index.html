@@ -1,122 +1,141 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ttwa.cloud</title>
+    <title>风铃-blog</title>
     <style>
         body {
+            margin: 0;
+            padding: 0;
+            background: #f0f0f0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            margin: 0;
-            background-color: #f0f0f0;
+            overflow: hidden;
         }
 
-      .blog-container {
-            max-width: 600px;
+        .container {
+            position: relative;
             width: 90%;
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            height: 80vh;
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px;
+            overflow: hidden;
         }
 
-        details {
-            background-color: #e0e0e0;
-            padding: 15px;
+        .background-shape {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(45deg, #81C784, #4CAF50);
+            border-radius: 50%;
+            top: -60px;
+            right: -60px;
+            opacity: 0.2;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #c3ecf7;
             margin-bottom: 20px;
-            border-radius: 5px;
-            cursor: pointer;
+            /* 移除旋转效果 */
         }
 
-        details summary {
-            font-weight: bold;
+        h1 {
+            margin: 0 0 10px 0;
+            font-size: 2.5em;
             color: #333;
+            position: relative;
+            z-index: 1;
         }
 
-        details[open] summary {
-            margin-bottom: 10px;
-        }
-
-        details p {
+        p {
+            font-size: 1.1em;
             color: #666;
-            font-size: 18px;
-            line-height: 1.5;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
         }
 
-        /* 媒体查询：当屏幕宽度小于等于 768px（通常是手机屏幕大小）时 */
-        @media (max-width: 768px) {
-          .blog-container {
-                width: 100%;
+        /* 移除社交链接 */
+        .social-links {
+            display: none;
+        }
+
+        /* 动态几何图形 */
+        .shape1, .shape2, .shape3 {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(45deg, #68ecec, #55b7f0);
+            border-radius: 10px;
+            opacity: 0.2;
+            animation: move 8s linear infinite;
+        }
+
+        .shape1 {
+            top: 50px;
+            left: -50px;
+            animation-delay: 0s;
+        }
+
+        .shape2 {
+            bottom: 50px;
+            right: -50px;
+            animation-delay: 2s;
+        }
+
+        .shape3 {
+            top: 200px;
+            left: -50px;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translatey(0px);
+            }
+            50% {
+                transform: translatey(-20px);
+            }
+            100% {
+                transform: translatey(0px);
             }
         }
 
-        /* 样式化 logo */
-      .logo {
-            width: 50px;
-            height: 50px;
-            background-image: url(https://s2.loli.net/2024/08/04/4qWCcUbyP876fDn.jpg);
-            background-size: cover;
-            margin-bottom: 15px;
-        }
-
-        /* 导航栏样式 */
-      .nav {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-
-      .nav a {
-            text-decoration: none;
-            color: #333;
-            padding: 5px 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        /* 页脚样式 */
-      .footer {
-            text-align: center;
-            margin-top: 20px;
-            color: #999;
-        }
-
-        details p a {
-            text-decoration: none;
-            color: #007bff;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-        }
-
-        details p a::before {
-            content: "•";
-            margin-right: 8px;
-            color: #ff6347;
+        @keyframes move {
+            0% {
+                transform: translatex(0px) rotate(0deg);
+            }
+            50% {
+                transform: translatex(300px) rotate(180deg);
+            }
+            100% {
+                transform: translatex(0px) rotate(360deg);
+            }
         }
     </style>
 </head>
-
 <body>
-    <div class="blog-container">
-        <div class="logo"></div>
-        <div class="nav"></div>
-        <details>
-            <summary>程序守护</summary>
-            <p>程序守护：直接将要守护的软件拖入表内，右键执行功能。<a href="https://i0i.lanzout.com/b004hx0b3a">下载地址</a></p>
-        </details>
-        <details>
-            <summary>开源小屋</summary>
-            <p>内涵各种开源项目。<a href="https://m.youlai.cn/hospitalrank/pro_0_14.html">下载地址</a></p>
-        </details>
-        <div class="footer">
-            密码啥的都是6666
-        </div>
+    <div class="container">
+        <div class="background-shape"></div>
+        <img src="https://s2.loli.net/2024/12/23/1Niy4WqCoeVaDuO.jpg" alt="头像" class="avatar">
+        <h2>公告</h2>
+        <p>邮箱:5408547@qq.com</p>
+        <!-- 移除社交链接 -->
     </div>
 </body>
-
 </html>

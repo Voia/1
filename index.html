@@ -1,141 +1,77 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html>
 <head>
-    <meta charset="UTF-8">
+    <title>图片混合拼图</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>风铃-blog</title>
     <style>
         body {
-            margin: 0;
-            padding: 0;
-            background: #f0f0f0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        .container {
-            position: relative;
-            width: 90%;
-            max-width: 600px;
-            height: 80vh;
-            background: #fff;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 40px;
-            overflow: hidden;
+            padding: 20px;
+            background-color: #f0f0f0;
         }
-
-        .background-shape {
-            position: absolute;
-            width: 150px;
-            height: 150px;
-            background: linear-gradient(45deg, #81C784, #4CAF50);
-            border-radius: 50%;
-            top: -60px;
-            right: -60px;
-            opacity: 0.2;
-            animation: float 6s ease-in-out infinite;
-        }
-
-        .avatar {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid #c3ecf7;
+        .upload-container {
             margin-bottom: 20px;
-            /* 移除旋转效果 */
         }
-
-        h1 {
-            margin: 0 0 10px 0;
-            font-size: 2.5em;
-            color: #333;
-            position: relative;
-            z-index: 1;
+        #canvas {
+            border: 2px solid #333;
+            margin-top: 20px;
+            background-color: white;
         }
-
-        p {
-            font-size: 1.1em;
-            color: #666;
-            margin-bottom: 20px;
-            position: relative;
-            z-index: 1;
-        }
-
-        /* 移除社交链接 */
-        .social-links {
-            display: none;
-        }
-
-        /* 动态几何图形 */
-        .shape1, .shape2, .shape3 {
-            position: absolute;
-            width: 100px;
-            height: 100px;
-            background: linear-gradient(45deg, #68ecec, #55b7f0);
-            border-radius: 10px;
-            opacity: 0.2;
-            animation: move 8s linear infinite;
-        }
-
-        .shape1 {
-            top: 50px;
-            left: -50px;
-            animation-delay: 0s;
-        }
-
-        .shape2 {
-            bottom: 50px;
-            right: -50px;
-            animation-delay: 2s;
-        }
-
-        .shape3 {
-            top: 200px;
-            left: -50px;
-            animation-delay: 4s;
-        }
-
-        @keyframes float {
-            0% {
-                transform: translatey(0px);
-            }
-            50% {
-                transform: translatey(-20px);
-            }
-            100% {
-                transform: translatey(0px);
-            }
-        }
-
-        @keyframes move {
-            0% {
-                transform: translatex(0px) rotate(0deg);
-            }
-            50% {
-                transform: translatex(300px) rotate(180deg);
-            }
-            100% {
-                transform: translatex(0px) rotate(360deg);
-            }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="background-shape"></div>
-        <img src="https://s2.loli.net/2024/12/23/1Niy4WqCoeVaDuO.jpg" alt="头像" class="avatar">
-        <h2>公告</h2>
-        <p>邮箱:5408547@qq.com</p>
-        <!-- 移除社交链接 -->
+    <h2>图片混合拼图工具</h2>
+    <div class="upload-container">
+        <input type="file" id="files" multiple accept="image/*">
+        <button onclick="mergeImages()">开始混合</button>
     </div>
+    <canvas id="canvas"></canvas>
+
+    <script>
+        async function mergeImages() {
+            const files = document.getElementById('files').files;
+            if (!files.length) return alert('请选择至少两张图片');
+
+            const images = [];
+            for (const file of files) {
+                const img = new Image();
+                img.src = URL.createObjectURL(file);
+                await new Promise(resolve => img.onload = resolve);
+                images.push(img);
+            }
+
+            // 计算画布尺寸（取所有图片最大宽高）
+            const maxWidth = Math.max(...images.map(img => img.width));
+            const maxHeight = Math.max(...images.map(img => img.height));
+            const canvas = document.getElementById('canvas');
+            canvas.width = maxWidth;
+            canvas.height = maxHeight;
+            const ctx = canvas.getContext('2d');
+
+            // 混合图片（透明度叠加）
+            ctx.globalCompositeOperation = 'lighter'; // 混合模式（可调整）
+            images.forEach(img => {
+                ctx.drawImage(img, 0, 0);
+            });
+
+            // 生成下载链接
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL('image/png');
+            link.download = 'merged-image.png';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
 </body>
 </html>

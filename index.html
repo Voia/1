@@ -90,6 +90,7 @@
             width: 100%;
             gap: 15px;
             flex-wrap: wrap;
+            margin-bottom: 15px;
         }
 
         button {
@@ -133,6 +134,15 @@
             transform: translateY(-2px);
         }
 
+        .qq-group-btn {
+            background-color: #12B7F5;
+        }
+
+        .qq-group-btn:hover, .qq-group-btn:active {
+            background-color: #0D9ED8;
+            transform: translateY(-2px);
+        }
+
         #canvas {
             border: 2px solid #ecf0f1;
             background-color: #ffffff;
@@ -171,6 +181,8 @@
             <button class="invert-btn" onclick="mergeImages(true)">反差色混合</button>
             <button class="clear-btn" onclick="clearSelection()">清空选择</button>
         </div>
+        
+        <button class="qq-group-btn" onclick="joinQQGroup()">加入QQ交流群</button>
     </div>
 
     <canvas id="canvas"></canvas>
@@ -194,6 +206,10 @@
         function clearSelection() {
             document.getElementById('files').value = '';
             document.getElementById('fileInfo').textContent = '未选择文件';
+        }
+
+        function joinQQGroup() {
+            window.location.href = "http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=YkMHd3g9Pmgj8wM7GDxuCsr1PD0FtWHi&authKey=0h7%2BIKYnLynRkFW0rxYTeLlDFo2RyZgn34n1TnqWUL89l4yEOGGYa%2BxTE3duEXGU&noverify=0&group_code=499590040";
         }
 
         function downloadImage(canvas, fileName) {

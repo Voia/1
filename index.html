@@ -121,7 +121,7 @@
         <h2>图片混合工具</h2>
         <input type="file" id="image-upload" multiple accept="image/*">
         <button class="upload-btn" onclick="document.getElementById('image-upload').click()">选择图片</button>
-        <button class="upload-btn" onclick="previewImages()">预览图片</button>
+        <button class="upload-btn" onclick="previewImages()">上传图片</button>
         <div id="image-preview"></div>
         
         <div class="controls">
@@ -138,7 +138,7 @@
                 <option value="hard-light">强光</option>
                 <option value="soft-light">柔光</option>
                 <option value="difference">差值</option>
-                <option value="exclusion">排除</option>
+                <option value="exclusion" selected>排除</option>
                 <option value="hue">色相</option>
                 <option value="saturation">饱和度</option>
                 <option value="color">颜色</option>
@@ -205,7 +205,7 @@
         // 图片混合函数
         function mergeImages() {
             if (images.length === 0) {
-                alert('请先上传并预览图片');
+                alert('请先上传图片');
                 return;
             }
 

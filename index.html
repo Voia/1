@@ -3,301 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>图片混合工具</title>
+    <title>拼好图</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", sans-serif;
+            list-style: none;
+            text-decoration: none;
+        }
+
         body {
-            font-family: 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #e8f4f8, #f0fafa);
+            line-height: 1.6;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            background-color: #f0f0f0;
-            margin: 0;
-            padding: 20px;
+            justify-content: center;
+            overflow: hidden;
         }
 
-        .container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-            width: 90%;
-            max-width: 800px;
-        }
-
-        .tip-box {
-            background: #fff9eb;
-            border-left: 4px solid #ffc107;
-            border-radius: 4px;
-            padding: 15px 20px;
-            margin: 20px 0;
+        /* 背景动效 */
+        .bg-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            box-sizing: border-box;
+            height: 100%;
+            z-index: -1;
         }
 
-        .tip-box p {
-            margin: 0;
-            line-height: 1.6;
-            color: #333;
+        .particle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #87ceeb;
+            border-radius: 50%;
+            opacity: 0.7;
+            animation: float 8s linear infinite;
         }
 
-        .tip-box strong {
-            color: #212529;
-            font-weight: 600;
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-30px); }
         }
 
-        h2 {
+        /* 主容器 */
+        .container {
             text-align: center;
-            color: #333;
+            padding: 2rem;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(135, 206, 235, 0.2);
+            margin: 1rem;
+            animation: fadeIn 0.8s ease-out;
         }
 
-        .upload-btn {
-            background-color: #4CAF50;
-            border: none;
-            color: white;
-            padding: 10px 20px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin: 8px 4px;
-            cursor: pointer;
-            border-radius: 4px;
-            transition: background-color 0.3s;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .upload-btn:hover {
-            background-color: #45a049;
+        /* 标题 */
+        .title {
+            font-size: 2.5rem;
+            color: #1e90ff;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 10px rgba(30, 144, 255, 0.1);
         }
 
-        #image-preview {
-            display: flex;
-            gap: 10px;
-            margin: 20px 0;
-            flex-wrap: wrap;
-            justify-content: center;
+        .subtitle {
+            color: #666;
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
         }
 
-        .preview-img {
-            width: 100px;
-            height: 100px;
-            object-fit: cover;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-
-        #canvas-container {
-            border: 1px solid #ddd;
-            margin: 20px 0;
-            position: relative;
-            display: flex;
-            justify-content: center;
-        }
-
-        canvas {
-            max-width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        .controls {
-            margin: 15px 0;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
+        /* 导航按钮 */
+        .nav-btn {
+            display: inline-flex;
             align-items: center;
             justify-content: center;
+            gap: 0.75rem;
+            padding: 1rem 2rem;
+            margin: 0.5rem;
+            background: #1e90ff;
+            color: white;
+            border: none;
+            border-radius: 24px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(30, 144, 255, 0.2);
         }
 
-        .controls label {
-            margin-right: 10px;
-            white-space: nowrap;
+        .nav-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(30, 144, 255, 0.3);
         }
 
-        #image-upload {
-            display: none;
+        .nav-btn i {
+            font-size: 1.25rem;
         }
 
-        .button-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
-            margin-top: 20px;
-        }
+        /* 图标样式（使用Font Awesome，需联网加载） */
+        @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css");
 
-        input[type="range"] {
-            width: 150px;
-        }
-
-        #opacity-value {
-            min-width: 40px;
-            display: inline-block;
-            text-align: center;
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .title { font-size: 2rem; }
+            .nav-btn { padding: 1rem 1.5rem; }
         }
     </style>
 </head>
 <body>
+    <div class="bg-particles">
+        <div class="particle" style="left: 10%; animation-delay: 2s;"></div>
+        <div class="particle" style="left: 30%; animation-delay: 5s;"></div>
+        <div class="particle" style="left: 50%; animation-delay: 8s;"></div>
+        <div class="particle" style="left: 70%; animation-delay: 3s;"></div>
+        <div class="particle" style="left: 90%; animation-delay: 6s;"></div>
+    </div>
+
     <div class="container">
-        <h2>图片混合工具</h2>
-        
-        <div class="tip-box">
-            <p><strong>温馨提示：</strong></p>
-            <p>• 白底图片推荐选择：<strong>正片叠底（Multiply）</strong></p>
-            <p>• 黑底图片推荐选择：<strong>排除（Exclusion）</strong></p>
-            <p>• 联系方式QQ：<strong>5408547（加不上请进交流群）</strong></p>
-        </div>
+        <h1 class="title">🌻 像素拼图工坊</h1>
+        <p class="subtitle">简单有趣的像素拼图工具</p>
 
-        <input type="file" id="image-upload" multiple accept="image/*">
-        <button class="upload-btn" onclick="document.getElementById('image-upload').click()">选择图片</button>
-        <button class="upload-btn" onclick="previewImages()">上传图片</button>
-        <div id="image-preview"></div>
-        
-        <div class="controls">
-            <label for="blend-mode">混合模式:</label>
-            <select id="blend-mode">
-                <option value="multiply">正片叠底（Multiply）</option>
-                <option value="exclusion" selected>排除（Exclusion）</option>
-            </select>
-            
-            <label for="opacity">透明度:</label>
-            <input type="range" id="opacity" min="0" max="100" value="70">
-            <span id="opacity-value">70%</span>
-        </div>
+        <!-- 拼图生成 -->
+        <a href="https://voia.github.io/p" class="nav-btn" target="_blank">
+            <i class="fas fa-cut"></i> 创作拼图
+        </a>
+
+        <!-- 拼图合成 -->
+        <a href="https://voia.github.io/0" class="nav-btn" target="_blank">
+            <i class="fas fa-image"></i> 拼图查看
+        </a>
+
+        <!-- 加入交流群 -->
+        <a href="http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=InIRjysCg41igDomMqBo2oSg5NSctXIq&authKey=1qXiGHk9qL%2F9siQ4ah2tCn4KtOL019kTIOFmgcp7OitFq9XZFhaxt%2FTc9LeSGDwL&noverify=0&group_code=522930859" class="nav-btn" target="_blank">
+            <i class="fas fa-users"></i> 加入交流群
+        </a>
     </div>
-
-    <div class="button-group">
-        <button class="upload-btn" onclick="mergeImages()">开始混合</button>
-        <button class="upload-btn" onclick="invertColors()">反差色效果</button>
-        <button class="upload-btn" onclick="downloadImage()">保存图片</button>
-        <button class="upload-btn" onclick="joinChatGroup()">加入聊天群</button>
-    </div>
-
-    <div id="canvas-container"></div>
 
     <script>
-        const uploadInput = document.getElementById('image-upload');
-        const previewContainer = document.getElementById('image-preview');
-        const canvasContainer = document.getElementById('canvas-container');
-        const blendModeSelect = document.getElementById('blend-mode');
-        const opacitySlider = document.getElementById('opacity');
-        const opacityValue = document.getElementById('opacity-value');
-        let images = [];
-        let originalCanvasData = null;
-
-        opacitySlider.addEventListener('input', () => {
-            opacityValue.textContent = `${opacitySlider.value}%`;
+        // 可选：点击按钮时添加轻微震动动效
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                btn.style.animation = 'bounce 0.3s ease';
+            });
         });
 
-        function previewImages() {
-            previewContainer.innerHTML = '';
-            images = [];
-            
-            if (!uploadInput.files || uploadInput.files.length === 0) {
-                alert('请先选择图片');
-                return;
-            }
-            
-            Array.from(uploadInput.files).forEach(file => {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const img = new Image();
-                    img.src = e.target.result;
-                    img.onload = () => {
-                        images.push(img);
-                        const imgElement = document.createElement('img');
-                        imgElement.className = 'preview-img';
-                        imgElement.src = e.target.result;
-                        previewContainer.appendChild(imgElement);
-                    };
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-
-        function mergeImages() {
-            if (images.length === 0) {
-                alert('请先上传图片');
-                return;
-            }
-
-            let maxWidth = 0, maxHeight = 0;
-            images.forEach(img => {
-                maxWidth = Math.max(maxWidth, img.width);
-                maxHeight = Math.max(maxHeight, img.height);
-            });
-
-            const canvas = document.createElement('canvas');
-            canvas.width = maxWidth;
-            canvas.height = maxHeight;
-            const ctx = canvas.getContext('2d');
-            canvasContainer.innerHTML = '';
-            canvasContainer.appendChild(canvas);
-
-            const blendMode = blendModeSelect.value;
-            const opacity = opacitySlider.value / 100;
-
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(images[0], 0, 0, canvas.width, canvas.height);
-
-            for (let i = 1; i < images.length; i++) {
-                ctx.globalCompositeOperation = blendMode;
-                ctx.globalAlpha = opacity;
-                ctx.drawImage(images[i], 0, 0, canvas.width, canvas.height);
-            }
-
-            ctx.globalCompositeOperation = 'source-over';
-            ctx.globalAlpha = 1;
-            originalCanvasData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        }
-
-        function invertColors() {
-            const canvas = document.querySelector('#canvas-container canvas');
-            if (!canvas) {
-                alert('请先生成混合图片');
-                return;
-            }
-            
-            const ctx = canvas.getContext('2d');
-            let imageData;
-            
-            if (originalCanvasData) {
-                imageData = new ImageData(
-                    new Uint8ClampedArray(originalCanvasData.data), 
-                    originalCanvasData.width, 
-                    originalCanvasData.height
-                );
-            } else {
-                imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            }
-            
-            const data = imageData.data;
-            for (let i = 0; i < data.length; i += 4) {
-                data[i] = 255 - data[i];     
-                data[i + 1] = 255 - data[i + 1]; 
-                data[i + 2] = 255 - data[i + 2]; 
-            }
-            
-            ctx.putImageData(imageData, 0, 0);
-        }
-
-        function downloadImage() {
-            const canvas = document.querySelector('#canvas-container canvas');
-            if (!canvas) {
-                alert('请先生成混合图片');
-                return;
-            }
-            
-            const link = document.createElement('a');
-            link.download = '混合图片.png';
-            link.href = canvas.toDataURL('image/png');
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-        function joinChatGroup() {
-            window.open('https://qm.qq.com/q/b7TvOpxhuM', '_blank');
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
         }
     </script>
 </body>

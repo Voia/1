@@ -4,7 +4,6 @@
     <title>图片混合拼图</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <style>
-        /* 全局样式 */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -12,7 +11,7 @@
         }
 
         body {
-            font-family: "Segoe UI", sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -20,9 +19,9 @@
             min-height: 100vh;
             background-color: #f5f5f5;
             padding: 20px;
+            -webkit-text-size-adjust: 100%;
         }
 
-        /* 标题样式 */
         h2 {
             color: #2c3e50;
             margin-bottom: 25px;
@@ -30,7 +29,6 @@
             text-align: center;
         }
 
-        /* 上传区域 */
         .upload-container {
             background: #ffffff;
             padding: 25px;
@@ -44,7 +42,6 @@
             align-items: center;
         }
 
-        /* 文件上传区域样式 */
         .file-upload {
             display: flex;
             flex-direction: column;
@@ -53,12 +50,10 @@
             margin-bottom: 20px;
         }
 
-        /* 文件输入框 */
         input[type="file"] {
             display: none;
         }
 
-        /* 自定义上传按钮 */
         .upload-btn {
             padding: 12px 30px;
             background-color: #3498db;
@@ -72,21 +67,23 @@
             width: 100%;
             max-width: 300px;
             text-align: center;
+            -webkit-tap-highlight-color: rgba(0,0,0,0);
+            -webkit-user-select: none;
+            user-select: none;
         }
 
-        .upload-btn:hover {
+        .upload-btn:hover, .upload-btn:active {
             background-color: #2980b9;
             transform: translateY(-2px);
         }
 
-        /* 文件信息显示 */
         .file-info {
             font-size: 0.9em;
             color: #7f8c8d;
             margin-top: 10px;
+            text-align: center;
         }
 
-        /* 操作按钮区域 */
         .action-buttons {
             display: flex;
             justify-content: center;
@@ -95,7 +92,6 @@
             flex-wrap: wrap;
         }
 
-        /* 自定义按钮 */
         button {
             padding: 12px 30px;
             color: white;
@@ -105,13 +101,16 @@
             cursor: pointer;
             transition: all 0.3s;
             min-width: 120px;
+            -webkit-tap-highlight-color: rgba(0,0,0,0);
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         .merge-btn {
             background-color: #4CAF50;
         }
 
-        .merge-btn:hover {
+        .merge-btn:hover, .merge-btn:active {
             background-color: #45a049;
             transform: translateY(-2px);
         }
@@ -120,7 +119,7 @@
             background-color: #9b59b6;
         }
 
-        .invert-btn:hover {
+        .invert-btn:hover, .invert-btn:active {
             background-color: #8e44ad;
             transform: translateY(-2px);
         }
@@ -129,12 +128,11 @@
             background-color: #e74c3c;
         }
 
-        .clear-btn:hover {
+        .clear-btn:hover, .clear-btn:active {
             background-color: #c0392b;
             transform: translateY(-2px);
         }
 
-        /* 画布样式 */
         #canvas {
             border: 2px solid #ecf0f1;
             background-color: #ffffff;
@@ -143,6 +141,17 @@
             height: auto;
             box-shadow: 0 2px 6px rgba(0,0,0,0.05);
         }
+
+        @media (max-width: 480px) {
+            .upload-container {
+                padding: 15px;
+            }
+            
+            button {
+                padding: 10px 20px;
+                min-width: 100px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -150,13 +159,15 @@
     
     <div class="upload-container">
         <div class="file-upload">
-            <label for="files" class="upload-btn">选择图片 (支持PNG/JPG)</label>
+            <label for="files" class="upload-btn" onclick="return true;">
+                选择图片 (支持PNG/JPG)
+            </label>
             <input type="file" id="files" multiple accept="image/*">
             <div id="fileInfo" class="file-info">未选择文件</div>
         </div>
         
         <div class="action-buttons">
-            <button class="merge-btn" onclick="mergeImages()">普通混合</button>
+            <button class="merge-btn" onclick="mergeImages(false)">普通混合</button>
             <button class="invert-btn" onclick="mergeImages(true)">反差色混合</button>
             <button class="clear-btn" onclick="clearSelection()">清空选择</button>
         </div>
@@ -165,6 +176,9 @@
     <canvas id="canvas"></canvas>
 
     <script>
+        // 检测iOS设备
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        
         // 文件选择变化时更新信息
         document.getElementById('files').addEventListener('change', function(e) {
             const files = e.target.files;
@@ -185,46 +199,123 @@
             document.getElementById('fileInfo').textContent = '未选择文件';
         }
 
+        // 下载图片
+        function downloadImage(canvas, fileName) {
+            if (isIOS) {
+                // iOS设备使用新窗口打开图片
+                const imgData = canvas.toDataURL('image/png');
+                const newWindow = window.open();
+                newWindow.document.write(`
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <title>${fileName}</title>
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <style>
+                            body { 
+                                display: flex; 
+                                justify-content: center; 
+                                align-items: center; 
+                                height: 100vh; 
+                                margin: 0; 
+                                background: #f5f5f5; 
+                            }
+                            img { 
+                                max-width: 100%; 
+                                max-height: 90vh; 
+                            }
+                            .download-btn {
+                                position: fixed;
+                                bottom: 20px;
+                                padding: 10px 20px;
+                                background-color: #3498db;
+                                color: white;
+                                border-radius: 5px;
+                                text-decoration: none;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div style="text-align: center;">
+                            <img src="${imgData}" alt="混合结果" />
+                            <p>长按图片保存到相册</p>
+                        </div>
+                    </body>
+                    </html>
+                `);
+            } else {
+                // 其他设备正常下载
+                const link = document.createElement('a');
+                link.href = canvas.toDataURL('image/png');
+                link.download = fileName;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        }
+
         async function mergeImages(invertColors = false) {
             const files = document.getElementById('files').files;
-            if (!files.length) return alert('请选择至少两张图片');
-            if (files.length < 2) return alert('请选择至少两张图片进行混合');
-            
-            const images = [];
-            for (const file of files) {
-                const img = new Image();
-                img.src = URL.createObjectURL(file);
-                await new Promise(resolve => img.onload = resolve);
-                images.push(img);
+            if (!files.length) {
+                alert('请选择至少两张图片');
+                return;
             }
-
-            // 计算画布尺寸
-            const maxWidth = Math.max(...images.map(img => img.width));
-            const maxHeight = Math.max(...images.map(img => img.height));
-            const canvas = document.getElementById('canvas');
-            canvas.width = maxWidth;
-            canvas.height = maxHeight;
-            const ctx = canvas.getContext('2d');
-
-            // 清空画布
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // 混合图片
-            ctx.globalCompositeOperation = 'lighter';
-            images.forEach(img => ctx.drawImage(img, 0, 0));
-
-            // 如果需要应用反差色
-            if (invertColors) {
-                applyInvertEffect(ctx, canvas.width, canvas.height);
+            if (files.length < 2) {
+                alert('请选择至少两张图片进行混合');
+                return;
             }
+            
+            try {
+                const images = [];
+                for (const file of files) {
+                    const img = new Image();
+                    img.src = URL.createObjectURL(file);
+                    await new Promise((resolve, reject) => {
+                        img.onload = resolve;
+                        img.onerror = reject;
+                    });
+                    images.push(img);
+                }
 
-            // 生成下载链接
-            const link = document.createElement('a');
-            link.href = canvas.toDataURL('image/png');
-            link.download = `拼图_${invertColors ? '反差色_' : ''}${Date.now()}.png`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+                // 计算画布尺寸
+                const maxWidth = Math.max(...images.map(img => img.width));
+                const maxHeight = Math.max(...images.map(img => img.height));
+                
+                // iOS尺寸限制检查
+                const MAX_CANVAS_SIZE = 4096;
+                if (maxWidth > MAX_CANVAS_SIZE || maxHeight > MAX_CANVAS_SIZE) {
+                    alert('图片尺寸过大，请选择较小尺寸的图片');
+                    return;
+                }
+                
+                const canvas = document.getElementById('canvas');
+                canvas.width = maxWidth;
+                canvas.height = maxHeight;
+                const ctx = canvas.getContext('2d');
+
+                // 清空画布
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // 混合图片
+                ctx.globalCompositeOperation = 'lighter';
+                images.forEach(img => ctx.drawImage(img, 0, 0));
+
+                // 如果需要应用反差色
+                if (invertColors) {
+                    applyInvertEffect(ctx, canvas.width, canvas.height);
+                }
+
+                // 生成下载链接
+                const fileName = `拼图_${invertColors ? '反差色_' : ''}${Date.now()}.png`;
+                downloadImage(canvas, fileName);
+                
+                // 释放内存
+                images.forEach(img => URL.revokeObjectURL(img.src));
+                
+            } catch (error) {
+                console.error('处理图片时出错:', error);
+                alert('处理图片时出错，请重试或选择其他图片');
+            }
         }
 
         // 应用反差色效果
@@ -233,11 +324,9 @@
             const data = imageData.data;
             
             for (let i = 0; i < data.length; i += 4) {
-                // 反转RGB通道
                 data[i] = 255 - data[i];     // R
                 data[i + 1] = 255 - data[i + 1]; // G
                 data[i + 2] = 255 - data[i + 2]; // B
-                // Alpha通道保持不变
             }
             
             ctx.putImageData(imageData, 0, 0);

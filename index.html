@@ -2,46 +2,194 @@
 <html>
 <head>
     <title>图片混合拼图</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <style>
+        /* 全局样式 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
+            font-family: "Segoe UI", sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #f5f5f5;
             padding: 20px;
-            background-color: #f0f0f0;
         }
+
+        /* 标题样式 */
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            font-size: 1.6em;
+            text-align: center;
+        }
+
+        /* 上传区域 */
         .upload-container {
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* 文件上传区域样式 */
+        .file-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
             margin-bottom: 20px;
         }
-        #canvas {
-            border: 2px solid #333;
-            margin-top: 20px;
-            background-color: white;
+
+        /* 文件输入框 */
+        input[type="file"] {
+            display: none;
         }
-        button {
-            padding: 10px 20px;
-            background-color: #4CAF50;
+
+        /* 自定义上传按钮 */
+        .upload-btn {
+            padding: 12px 30px;
+            background-color: #3498db;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 6px;
+            font-size: 1em;
             cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 15px;
+            width: 100%;
+            max-width: 300px;
+            text-align: center;
+        }
+
+        .upload-btn:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        /* 文件信息显示 */
+        .file-info {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            margin-top: 10px;
+        }
+
+        /* 操作按钮区域 */
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        /* 自定义按钮 */
+        button {
+            padding: 12px 30px;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 120px;
+        }
+
+        .merge-btn {
+            background-color: #4CAF50;
+        }
+
+        .merge-btn:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+        }
+
+        .invert-btn {
+            background-color: #9b59b6;
+        }
+
+        .invert-btn:hover {
+            background-color: #8e44ad;
+            transform: translateY(-2px);
+        }
+
+        .clear-btn {
+            background-color: #e74c3c;
+        }
+
+        .clear-btn:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        /* 画布样式 */
+        #canvas {
+            border: 2px solid #ecf0f1;
+            background-color: #ffffff;
+            margin-bottom: 20px;
+            max-width: 100%;
+            height: auto;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
         }
     </style>
 </head>
 <body>
     <h2>图片混合拼图工具</h2>
+    
     <div class="upload-container">
-        <input type="file" id="files" multiple accept="image/*">
-        <button onclick="mergeImages()">开始混合</button>
+        <div class="file-upload">
+            <label for="files" class="upload-btn">选择图片 (支持PNG/JPG)</label>
+            <input type="file" id="files" multiple accept="image/*">
+            <div id="fileInfo" class="file-info">未选择文件</div>
+        </div>
+        
+        <div class="action-buttons">
+            <button class="merge-btn" onclick="mergeImages()">普通混合</button>
+            <button class="invert-btn" onclick="mergeImages(true)">反差色混合</button>
+            <button class="clear-btn" onclick="clearSelection()">清空选择</button>
+        </div>
     </div>
+
     <canvas id="canvas"></canvas>
 
     <script>
-        async function mergeImages() {
+        // 文件选择变化时更新信息
+        document.getElementById('files').addEventListener('change', function(e) {
+            const files = e.target.files;
+            const fileInfo = document.getElementById('fileInfo');
+            
+            if (files.length === 0) {
+                fileInfo.textContent = '未选择文件';
+            } else if (files.length === 1) {
+                fileInfo.textContent = `已选择1个文件: ${files[0].name}`;
+            } else {
+                fileInfo.textContent = `已选择${files.length}个文件`;
+            }
+        });
+
+        // 清空选择
+        function clearSelection() {
+            document.getElementById('files').value = '';
+            document.getElementById('fileInfo').textContent = '未选择文件';
+        }
+
+        async function mergeImages(invertColors = false) {
             const files = document.getElementById('files').files;
             if (!files.length) return alert('请选择至少两张图片');
-
+            if (files.length < 2) return alert('请选择至少两张图片进行混合');
+            
             const images = [];
             for (const file of files) {
                 const img = new Image();
@@ -50,7 +198,7 @@
                 images.push(img);
             }
 
-            // 计算画布尺寸（取所有图片最大宽高）
+            // 计算画布尺寸
             const maxWidth = Math.max(...images.map(img => img.width));
             const maxHeight = Math.max(...images.map(img => img.height));
             const canvas = document.getElementById('canvas');
@@ -58,19 +206,41 @@
             canvas.height = maxHeight;
             const ctx = canvas.getContext('2d');
 
-            // 混合图片（透明度叠加）
-            ctx.globalCompositeOperation = 'lighter'; // 混合模式（可调整）
-            images.forEach(img => {
-                ctx.drawImage(img, 0, 0);
-            });
+            // 清空画布
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 混合图片
+            ctx.globalCompositeOperation = 'lighter';
+            images.forEach(img => ctx.drawImage(img, 0, 0));
+
+            // 如果需要应用反差色
+            if (invertColors) {
+                applyInvertEffect(ctx, canvas.width, canvas.height);
+            }
 
             // 生成下载链接
             const link = document.createElement('a');
             link.href = canvas.toDataURL('image/png');
-            link.download = 'merged-image.png';
+            link.download = `拼图_${invertColors ? '反差色_' : ''}${Date.now()}.png`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+        }
+
+        // 应用反差色效果
+        function applyInvertEffect(ctx, width, height) {
+            const imageData = ctx.getImageData(0, 0, width, height);
+            const data = imageData.data;
+            
+            for (let i = 0; i < data.length; i += 4) {
+                // 反转RGB通道
+                data[i] = 255 - data[i];     // R
+                data[i + 1] = 255 - data[i + 1]; // G
+                data[i + 2] = 255 - data[i + 2]; // B
+                // Alpha通道保持不变
+            }
+            
+            ctx.putImageData(imageData, 0, 0);
         }
     </script>
 </body>

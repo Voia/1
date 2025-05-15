@@ -6,7 +6,7 @@
     <title>图片混合工具</title>
     <style>
         body {
-            font-family: '微软雅黑', sans-serif;
+            font-family: 'Microsoft YaHei', sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -21,6 +21,13 @@
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             margin-bottom: 20px;
+            width: 90%;
+            max-width: 800px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
         }
 
         .upload-btn {
@@ -32,9 +39,14 @@
             text-decoration: none;
             display: inline-block;
             font-size: 16px;
-            margin: 4px 2px;
+            margin: 8px 4px;
             cursor: pointer;
             border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .upload-btn:hover {
+            background-color: #45a049;
         }
 
         #image-preview {
@@ -42,6 +54,7 @@
             gap: 10px;
             margin: 20px 0;
             flex-wrap: wrap;
+            justify-content: center;
         }
 
         .preview-img {
@@ -54,8 +67,16 @@
 
         #canvas-container {
             border: 1px solid #ddd;
-            margin-top: 20px;
+            margin: 20px 0;
             position: relative;
+            display: flex;
+            justify-content: center;
+        }
+
+        canvas {
+            max-width: 100%;
+            height: auto;
+            display: block;
         }
 
         .controls {
@@ -64,10 +85,34 @@
             flex-wrap: wrap;
             gap: 15px;
             align-items: center;
+            justify-content: center;
         }
 
         .controls label {
             margin-right: 10px;
+            white-space: nowrap;
+        }
+
+        #image-upload {
+            display: none;
+        }
+
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        input[type="range"] {
+            width: 150px;
+        }
+
+        #opacity-value {
+            min-width: 40px;
+            display: inline-block;
+            text-align: center;
         }
     </style>
 </head>
@@ -75,13 +120,14 @@
     <div class="container">
         <h2>图片混合工具</h2>
         <input type="file" id="image-upload" multiple accept="image/*">
-        <button class="upload-btn" onclick="previewImages()">上传图片</button>
+        <button class="upload-btn" onclick="document.getElementById('image-upload').click()">选择图片</button>
+        <button class="upload-btn" onclick="previewImages()">预览图片</button>
         <div id="image-preview"></div>
         
         <div class="controls">
             <label for="blend-mode">混合模式:</label>
             <select id="blend-mode">
-                <option value="normal">正常</option>
+                <option value="source-over">正常</option>
                 <option value="multiply">正片叠底</option>
                 <option value="screen">滤色</option>
                 <option value="overlay">叠加</option>
@@ -105,10 +151,12 @@
         </div>
     </div>
 
-    <button class="upload-btn" onclick="mergeImages()">开始混合</button>
-    <button class="upload-btn" onclick="invertColors()">反差色效果</button>
-    <button class="upload-btn" onclick="downloadImage()">保存图片</button>
-    <button class="upload-btn" onclick="joinChatGroup()">加入聊天群</button>
+    <div class="button-group">
+        <button class="upload-btn" onclick="mergeImages()">开始混合</button>
+        <button class="upload-btn" onclick="invertColors()">反差色效果</button>
+        <button class="upload-btn" onclick="downloadImage()">保存图片</button>
+        <button class="upload-btn" onclick="joinChatGroup()">加入聊天群</button>
+    </div>
 
     <div id="canvas-container"></div>
 
@@ -132,6 +180,11 @@
             previewContainer.innerHTML = '';
             images = [];
             
+            if (!uploadInput.files || uploadInput.files.length === 0) {
+                alert('请先选择图片');
+                return;
+            }
+            
             Array.from(uploadInput.files).forEach(file => {
                 const reader = new FileReader();
                 reader.onload = (e) => {
@@ -152,7 +205,7 @@
         // 图片混合函数
         function mergeImages() {
             if (images.length === 0) {
-                alert('请先上传图片');
+                alert('请先上传并预览图片');
                 return;
             }
 
@@ -244,7 +297,9 @@
             const link = document.createElement('a');
             link.download = '混合图片.png';
             link.href = canvas.toDataURL('image/png');
+            document.body.appendChild(link);
             link.click();
+            document.body.removeChild(link);
         }
 
         // 加入聊天群函数
@@ -253,4 +308,4 @@
         }
     </script>
 </body>
-</html>    
+</html>

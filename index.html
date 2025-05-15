@@ -1,311 +1,256 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-    <title>图片混合拼图</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片混合工具</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: '微软雅黑', sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            background-color: #f5f5f5;
+            background-color: #f0f0f0;
+            margin: 0;
             padding: 20px;
-            -webkit-text-size-adjust: 100%;
         }
 
-        h2 {
-            color: #2c3e50;
-            margin-bottom: 25px;
-            font-size: 1.6em;
-            text-align: center;
-        }
-
-        .upload-container {
-            background: #ffffff;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            margin-bottom: 30px;
-            width: 100%;
-            max-width: 600px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .file-upload {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
             margin-bottom: 20px;
-        }
-
-        input[type="file"] {
-            display: none;
         }
 
         .upload-btn {
-            padding: 12px 30px;
-            background-color: #3498db;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 1em;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-bottom: 15px;
-            width: 100%;
-            max-width: 300px;
-            text-align: center;
-            -webkit-tap-highlight-color: rgba(0,0,0,0);
-            -webkit-user-select: none;
-            user-select: none;
-        }
-
-        .upload-btn:hover, .upload-btn:active {
-            background-color: #2980b9;
-            transform: translateY(-2px);
-        }
-
-        .file-info {
-            font-size: 0.9em;
-            color: #7f8c8d;
-            margin-top: 10px;
-            text-align: center;
-        }
-
-        .action-buttons {
-            display: flex;
-            justify-content: center;
-            width: 100%;
-            gap: 15px;
-            flex-wrap: wrap;
-            margin-bottom: 15px;
-        }
-
-        button {
-            padding: 12px 30px;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 1em;
-            cursor: pointer;
-            transition: all 0.3s;
-            min-width: 120px;
-            -webkit-tap-highlight-color: rgba(0,0,0,0);
-            -webkit-user-select: none;
-            user-select: none;
-        }
-
-        .merge-btn {
             background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 4px;
         }
 
-        .merge-btn:hover, .merge-btn:active {
-            background-color: #45a049;
-            transform: translateY(-2px);
+        #image-preview {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
         }
 
-        .invert-btn {
-            background-color: #9b59b6;
+        .preview-img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border: 1px solid #ddd;
+            border-radius: 4px;
         }
 
-        .invert-btn:hover, .invert-btn:active {
-            background-color: #8e44ad;
-            transform: translateY(-2px);
+        #canvas-container {
+            border: 1px solid #ddd;
+            margin-top: 20px;
+            position: relative;
         }
 
-        .clear-btn {
-            background-color: #e74c3c;
+        .controls {
+            margin: 15px 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
         }
 
-        .clear-btn:hover, .clear-btn:active {
-            background-color: #c0392b;
-            transform: translateY(-2px);
-        }
-
-        .qq-group-btn {
-            background-color: #12B7F5;
-        }
-
-        .qq-group-btn:hover, .qq-group-btn:active {
-            background-color: #0D9ED8;
-            transform: translateY(-2px);
-        }
-
-        #canvas {
-            border: 2px solid #ecf0f1;
-            background-color: #ffffff;
-            margin-bottom: 20px;
-            max-width: 100%;
-            height: auto;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-        }
-
-        @media (max-width: 480px) {
-            .upload-container {
-                padding: 15px;
-            }
-            
-            button {
-                padding: 10px 20px;
-                min-width: 100px;
-            }
+        .controls label {
+            margin-right: 10px;
         }
     </style>
 </head>
 <body>
-    <h2>图片混合拼图工具</h2>
-    
-    <div class="upload-container">
-        <div class="file-upload">
-            <label for="files" class="upload-btn" onclick="return true;">
-                选择图片 (支持PNG/JPG)
-            </label>
-            <input type="file" id="files" multiple accept="image/*">
-            <div id="fileInfo" class="file-info">未选择文件</div>
-        </div>
+    <div class="container">
+        <h2>图片混合工具</h2>
+        <input type="file" id="image-upload" multiple accept="image/*">
+        <button class="upload-btn" onclick="previewImages()">上传图片</button>
+        <div id="image-preview"></div>
         
-        <div class="action-buttons">
-            <button class="merge-btn" onclick="mergeImages(false)">普通混合</button>
-            <button class="invert-btn" onclick="mergeImages(true)">反差色混合</button>
-            <button class="clear-btn" onclick="clearSelection()">清空选择</button>
+        <div class="controls">
+            <label for="blend-mode">混合模式:</label>
+            <select id="blend-mode">
+                <option value="normal">正常</option>
+                <option value="multiply">正片叠底</option>
+                <option value="screen">滤色</option>
+                <option value="overlay">叠加</option>
+                <option value="darken">变暗</option>
+                <option value="lighten">变亮</option>
+                <option value="color-dodge">颜色减淡</option>
+                <option value="color-burn">颜色加深</option>
+                <option value="hard-light">强光</option>
+                <option value="soft-light">柔光</option>
+                <option value="difference">差值</option>
+                <option value="exclusion">排除</option>
+                <option value="hue">色相</option>
+                <option value="saturation">饱和度</option>
+                <option value="color">颜色</option>
+                <option value="luminosity">亮度</option>
+            </select>
+            
+            <label for="opacity">透明度:</label>
+            <input type="range" id="opacity" min="0" max="100" value="70">
+            <span id="opacity-value">70%</span>
         </div>
-        
-        <button class="qq-group-btn" onclick="joinQQGroup()">加入QQ交流群</button>
     </div>
 
-    <canvas id="canvas"></canvas>
+    <button class="upload-btn" onclick="mergeImages()">开始混合</button>
+    <button class="upload-btn" onclick="invertColors()">反差色效果</button>
+    <button class="upload-btn" onclick="downloadImage()">保存图片</button>
+    <button class="upload-btn" onclick="joinChatGroup()">加入聊天群</button>
+
+    <div id="canvas-container"></div>
 
     <script>
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-        
-        document.getElementById('files').addEventListener('change', function(e) {
-            const files = e.target.files;
-            const fileInfo = document.getElementById('fileInfo');
-            
-            if (files.length === 0) {
-                fileInfo.textContent = '未选择文件';
-            } else if (files.length === 1) {
-                fileInfo.textContent = `已选择1个文件: ${files[0].name}`;
-            } else {
-                fileInfo.textContent = `已选择${files.length}个文件`;
-            }
+        const uploadInput = document.getElementById('image-upload');
+        const previewContainer = document.getElementById('image-preview');
+        const canvasContainer = document.getElementById('canvas-container');
+        const blendModeSelect = document.getElementById('blend-mode');
+        const opacitySlider = document.getElementById('opacity');
+        const opacityValue = document.getElementById('opacity-value');
+        let images = [];
+        let originalCanvasData = null;
+
+        // 更新透明度显示
+        opacitySlider.addEventListener('input', () => {
+            opacityValue.textContent = `${opacitySlider.value}%`;
         });
 
-        function clearSelection() {
-            document.getElementById('files').value = '';
-            document.getElementById('fileInfo').textContent = '未选择文件';
-        }
-
-        function joinQQGroup() {
-            window.location.href = "http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=YkMHd3g9Pmgj8wM7GDxuCsr1PD0FtWHi&authKey=0h7%2BIKYnLynRkFW0rxYTeLlDFo2RyZgn34n1TnqWUL89l4yEOGGYa%2BxTE3duEXGU&noverify=0&group_code=499590040";
-        }
-
-        function downloadImage(canvas, fileName) {
-            if (isIOS) {
-                const imgData = canvas.toDataURL('image/png');
-                const newWindow = window.open();
-                newWindow.document.write(`
-                    <!DOCTYPE html>
-                    <html>
-                    <head>
-                        <title>${fileName}</title>
-                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                        <style>
-                            body { 
-                                display: flex; 
-                                justify-content: center; 
-                                align-items: center; 
-                                height: 100vh; 
-                                margin: 0; 
-                                background: #f5f5f5; 
-                            }
-                            img { 
-                                max-width: 100%; 
-                                max-height: 90vh; 
-                            }
-                        </style>
-                    </head>
-                    <body>
-                        <div style="text-align: center;">
-                            <img src="${imgData}" alt="混合结果" />
-                            <p>长按图片保存到相册</p>
-                        </div>
-                    </body>
-                    </html>
-                `);
-            } else {
-                const link = document.createElement('a');
-                link.href = canvas.toDataURL('image/png');
-                link.download = fileName;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            }
-        }
-
-        async function mergeImages(invertColors = false) {
-            const files = document.getElementById('files').files;
-            if (!files.length || files.length < 2) return;
+        // 图片预览函数
+        function previewImages() {
+            previewContainer.innerHTML = '';
+            images = [];
             
-            try {
-                const images = [];
-                for (const file of files) {
+            Array.from(uploadInput.files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
                     const img = new Image();
-                    img.src = URL.createObjectURL(file);
-                    await new Promise((resolve) => {
-                        img.onload = resolve;
-                        img.onerror = resolve;
-                    });
-                    images.push(img);
-                }
+                    img.src = e.target.result;
+                    img.onload = () => {
+                        images.push(img);
+                        const imgElement = document.createElement('img');
+                        imgElement.className = 'preview-img';
+                        imgElement.src = e.target.result;
+                        previewContainer.appendChild(imgElement);
+                    };
+                };
+                reader.readAsDataURL(file);
+            });
+        }
 
-                const maxWidth = Math.max(...images.map(img => img.width));
-                const maxHeight = Math.max(...images.map(img => img.height));
-                
-                const MAX_CANVAS_SIZE = 4096;
-                if (maxWidth > MAX_CANVAS_SIZE || maxHeight > MAX_CANVAS_SIZE) return;
-                
-                const canvas = document.getElementById('canvas');
-                canvas.width = maxWidth;
-                canvas.height = maxHeight;
-                const ctx = canvas.getContext('2d');
-
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.globalCompositeOperation = 'lighter';
-                images.forEach(img => ctx.drawImage(img, 0, 0));
-
-                if (invertColors) {
-                    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                    const data = imageData.data;
-                    for (let i = 0; i < data.length; i += 4) {
-                        data[i] = 255 - data[i];
-                        data[i + 1] = 255 - data[i + 1];
-                        data[i + 2] = 255 - data[i + 2];
-                    }
-                    ctx.putImageData(imageData, 0, 0);
-                }
-
-                const fileName = `拼图_${invertColors ? '反差色_' : ''}${Date.now()}.png`;
-                downloadImage(canvas, fileName);
-                
-                images.forEach(img => URL.revokeObjectURL(img.src));
-                
-            } catch (error) {
-                console.log('图片处理完成');
+        // 图片混合函数
+        function mergeImages() {
+            if (images.length === 0) {
+                alert('请先上传图片');
+                return;
             }
+
+            // 找出最大图片尺寸
+            let maxWidth = 0;
+            let maxHeight = 0;
+            images.forEach(img => {
+                maxWidth = Math.max(maxWidth, img.width);
+                maxHeight = Math.max(maxHeight, img.height);
+            });
+
+            // 创建画布，尺寸为最大图片的尺寸
+            const canvas = document.createElement('canvas');
+            canvas.width = maxWidth;
+            canvas.height = maxHeight;
+            const ctx = canvas.getContext('2d');
+            canvasContainer.innerHTML = '';
+            canvasContainer.appendChild(canvas);
+
+            // 获取选择的混合模式和透明度
+            const blendMode = blendModeSelect.value;
+            const opacity = opacitySlider.value / 100;
+
+            // 清空画布
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 先绘制第一张图片作为背景
+            ctx.drawImage(images[0], 0, 0, canvas.width, canvas.height);
+
+            // 对后续图片应用混合模式并叠加
+            for (let i = 1; i < images.length; i++) {
+                ctx.globalCompositeOperation = blendMode;
+                ctx.globalAlpha = opacity;
+                ctx.drawImage(images[i], 0, 0, canvas.width, canvas.height);
+            }
+
+            // 重置混合模式和透明度
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.globalAlpha = 1;
+            
+            // 保存原始画布数据，用于反差色恢复
+            originalCanvasData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        }
+
+        // 反差色效果函数
+        function invertColors() {
+            const canvas = document.querySelector('#canvas-container canvas');
+            if (!canvas) {
+                alert('请先生成混合图片');
+                return;
+            }
+            
+            const ctx = canvas.getContext('2d');
+            let imageData;
+            
+            // 如果有原始数据，使用原始数据进行处理
+            if (originalCanvasData) {
+                imageData = new ImageData(
+                    new Uint8ClampedArray(originalCanvasData.data), 
+                    originalCanvasData.width, 
+                    originalCanvasData.height
+                );
+            } else {
+                // 如果没有原始数据，获取当前画布数据
+                imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            }
+            
+            const data = imageData.data;
+            // 遍历每个像素并应用反差色效果
+            for (let i = 0; i < data.length; i += 4) {
+                data[i] = 255 - data[i];     // 红
+                data[i + 1] = 255 - data[i + 1]; // 绿
+                data[i + 2] = 255 - data[i + 2]; // 蓝
+                // 保持透明度不变
+            }
+            
+            // 将处理后的数据绘制回画布
+            ctx.putImageData(imageData, 0, 0);
+        }
+
+        // 下载图片函数
+        function downloadImage() {
+            const canvas = document.querySelector('#canvas-container canvas');
+            if (!canvas) {
+                alert('请先生成混合图片');
+                return;
+            }
+            
+            const link = document.createElement('a');
+            link.download = '混合图片.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        // 加入聊天群函数
+        function joinChatGroup() {
+            window.open('https://qm.qq.com/q/ewmBDX2bkW', '_blank');
         }
     </script>
 </body>
-</html>
+</html>    

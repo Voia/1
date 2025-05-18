@@ -2,164 +2,180 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>拼好图</title>
-    <!-- 新增图标链接 -->
-    <link rel="icon" href="http://cdnjson.com/images/2025/05/17/1000009028.png" type="image/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>域名变更通知</title>
     <style>
+        /* 全局样式重置 */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: "Segoe UI", sans-serif;
-            list-style: none;
-            text-decoration: none;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
         }
 
-        body {
-            background: linear-gradient(135deg, #e8f4f8, #f0fafa);
-            line-height: 1.6;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-
-        /* 背景动效 */
-        .bg-particles {
+        /* 弹窗容器 */
+        .domain-popup {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
         }
 
-        .particle {
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            background: #87ceeb;
-            border-radius: 50%;
-            opacity: 0.7;
-            animation: float 8s linear infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-30px); }
-        }
-
-        /* 主容器 */
-        .container {
-            text-align: center;
-            padding: 2rem;
-            background: white;
+        /* 弹窗内容 */
+        .popup-content {
+            background: #fff;
             border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(135, 206, 235, 0.2);
-            margin: 1rem;
-            animation: fadeIn 0.8s ease-out;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+            width: 90%;
+            max-width: 500px;
+            min-width: 280px;
+            padding: 32px 24px;
+            transform: translateY(-20px);
+            opacity: 0;
+            transition: all 0.3s ease;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* 显示动画 */
+        .domain-popup.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .domain-popup.active .popup-content {
+            transform: translateY(0);
+            opacity: 1;
         }
 
         /* 标题 */
-        .title {
-            font-size: 2.5rem;
-            color: #1e90ff;
-            margin-bottom: 0.5rem;
-            text-shadow: 0 0 10px rgba(30, 144, 255, 0.1);
+        .popup-title {
+            color: #007AFF;
+            font-size: 1.35rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 16px;
         }
 
-        .subtitle {
+        /* 内容区域 */
+        .domain-info {
+            color: #333;
+            line-height: 1.7;
+            font-size: 0.95rem;
+            margin-bottom: 24px;
+        }
+
+        .domain-info strong {
+            display: block;
+            color: #0056B3;
+            font-size: 1.1rem;
+            margin: 12px 0;
+            text-align: center;
+        }
+
+        /* 操作指引 */
+        .operation-tip {
             color: #666;
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
+            font-size: 0.875rem;
+            margin-bottom: 20px;
+            text-align: center;
         }
 
-        /* 导航按钮 */
-        .nav-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.75rem;
-            padding: 1rem 2rem;
-            margin: 0.5rem;
-            background: #1e90ff;
-            color: white;
+        /* 关闭按钮 */
+        .close-btn {
+            width: 100%;
+            padding: 14px;
             border: none;
-            border-radius: 24px;
+            border-radius: 10px;
             font-size: 1rem;
+            font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(30, 144, 255, 0.2);
+            background: #FF4444;
+            color: #fff;
+            transition: background 0.3s ease;
+            touch-action: manipulation;
         }
 
-        .nav-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 24px rgba(30, 144, 255, 0.3);
+        .close-btn:hover {
+            background: #FF6B6B;
         }
 
-        .nav-btn i {
-            font-size: 1.25rem;
-        }
-
-        /* 图标样式（使用Font Awesome，需联网加载） */
-        @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css");
-
-        /* 响应式设计 */
+        /* 移动端优化 */
         @media (max-width: 768px) {
-            .title { font-size: 2rem; }
-            .nav-btn { padding: 1rem 1.5rem; }
+            .popup-content {
+                padding: 24px 20px;
+            }
+
+            .popup-title {
+                font-size: 1.25rem;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="bg-particles">
-        <div class="particle" style="left: 10%; animation-delay: 2s;"></div>
-        <div class="particle" style="left: 30%; animation-delay: 5s;"></div>
-        <div class="particle" style="left: 50%; animation-delay: 8s;"></div>
-        <div class="particle" style="left: 70%; animation-delay: 3s;"></div>
-        <div class="particle" style="left: 90%; animation-delay: 6s;"></div>
-    </div>
-
-    <div class="container">
-        <h1 class="title">🌻 像素拼图工坊</h1>
-        <p class="subtitle">简单有趣的像素拼图工具</p>
-
-        <!-- 拼图生成 -->
-        <a href="https://xz.ttwa.cloud" class="nav-btn" target="_blank">
-            <i class="fas fa-cut"></i> 创作拼图
-        </a>
-
-        <!-- 拼图合成 -->
-        <a href="https://tp.ttwa.cloud" class="nav-btn" target="_blank">
-            <i class="fas fa-image"></i> 拼图查看
-        </a>
-
-        <!-- 加入交流群 -->
-        <a href="http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=akT5EiIZZ_wCgZ4LpNSyi43_DLncnf73&authKey=2hjzW%2Brx4FfBSwu6EErMPyBuzDfsmzuTtl0CjloV0eSLVEyGkLFHbrt7C2bHrqoB&noverify=0&group_code=4995900407OitFq9XZFhaxt%2FTc9LeSGDwL&noverify=0&group_code=522930859" class="nav-btn" target="_blank">
-            <i class="fas fa-users"></i> 加入交流群
-        </a>
+    <!-- 域名变更弹窗 -->
+    <div class="domain-popup" id="domainPopup">
+        <div class="popup-content">
+            <div class="popup-title">【重要通知】域名变更提醒</div>
+            <div class="domain-info">
+                您好！因业务升级，我们的官方域名已更换为：<br>
+                <strong>新域名：caning.cc</strong><br>
+                原域名：<strong>ttwa.cloud</strong> 将于 <span style="color: #FF6B6B;">2025年5月26日</span> 停止使用。
+            </div>
+            <div class="operation-tip">
+                建议您及时更新访问方式：<br>
+                • 手机用户：点击浏览器「添加到主屏幕」<br>
+                • PC用户：按「Ctrl+D」收藏新域名
+            </div>
+            <button class="close-btn" onclick="closePopup()">我已知晓（刷新后会再次提示）</button>
+        </div>
     </div>
 
     <script>
-        // 可选：点击按钮时添加轻微震动动效
-        document.querySelectorAll('.nav-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                btn.style.animation = 'bounce 0.3s ease';
-            });
+        const popup = document.getElementById('domainPopup');
+
+        // 页面加载/刷新时强制显示弹窗
+        window.addEventListener('DOMContentLoaded', () => {
+            showPopup();
         });
 
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
+        window.addEventListener('pageshow', (event) => {
+            if (event.persisted) { // 处理浏览器后退缓存导致的刷新
+                showPopup();
+            }
+        });
+
+        // 显示弹窗
+        function showPopup() {
+            popup.classList.add('active');
+            // 绑定关闭事件（同时支持点击和触摸）
+            popup.querySelector('.close-btn').addEventListener('click', closePopup);
+            popup.querySelector('.close-btn').addEventListener('touchstart', closePopup);
         }
+
+        // 关闭弹窗（仅隐藏，不记录状态）
+        function closePopup() {
+            popup.classList.remove('active');
+            // 移除事件监听避免重复绑定（可选）
+            popup.querySelectorAll('.close-btn').forEach(btn => {
+                btn.removeEventListener('click', closePopup);
+                btn.removeEventListener('touchstart', closePopup);
+            });
+        }
+
+        // 禁止移动端滚动穿透
+        document.addEventListener('touchmove', (e) => {
+            if (popup.classList.contains('active')) {
+                e.preventDefault();
+            }
+        }, { passive: false });
     </script>
 </body>
 </html>
